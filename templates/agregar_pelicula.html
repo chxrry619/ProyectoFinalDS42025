@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Movie database - Agregar película{% endblock %}
+{% block body %}
+<body>
+  <div class="container mt-5">
+    <form method="POST">
+      <div class="mb-3">
+        <label for="title" class="form-label">Título:</label>
+        <input type="text" class="form-control" id="titulo" name="titulo" required>
+      </div>
+      <div class="mb-3">
+        <label for="release_date" class="form-label">Fecha de estreno:</label>
+        <input type="date" class="form-control" id="fecha_lanzamiento" name="fecha_lanzamiento" required>
+      </div>
+      <div class="mb-3">
+        <label for="poster_url" class="form-label">Poster URL:</label>
+        <input type="url" class="form-control" id="url_poster" name="url_poster" required>
+      </div>
+      <div class="mb-3">
+        <img id="poster_preview" src="" alt="Poster Preview" style="max-width: 200px; display: none;">
+      </div>
+      <button type="submit" class="btn btn-primary">Agregar película</button>
+    </form>
+  </div>
+  <script>
+    const posterUrlInput = document.getElementById('url_poster');
+    const posterPreview = document.getElementById('poster_preview');
+
+    posterUrlInput.addEventListener('input', function() {
+      const url = posterUrlInput.value;
+      if (url) {
+        posterPreview.src = url;
+        posterPreview.style.display = 'block';
+      } else {
+        posterPreview.src = '';
+        posterPreview.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+{% endblock %}

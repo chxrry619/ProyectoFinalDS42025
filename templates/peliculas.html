@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Movie database - Actores{% endblock %}
+{% block body %}
+<div>
+
+<table id="peliculasTable" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Fecha de lanzamiento</th>
+            <th>Póster</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pelicula in peliculas %}
+        <tr>
+            <td><a href="/pelicula/{{ pelicula.id_pelicula }}">{{ pelicula.titulo_pelicula }}</a></td>
+            <td>{{ pelicula.fecha_lanzamiento }}</td>
+            <td><a href="/pelicula/{{ pelicula.id_pelicula }}"><img src="{{ pelicula.url_poster }}" alt="{{ pelicula.titulo_pelicula }}" style="width:100px;height:100px;"></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#peliculasTable').DataTable({
+                            language: {
+                            url: '//cdn.datatables.net/plug-ins/2.2.2/i18n/es-ES.json',
+                            },
+        });
+    });
+</script>
+
+</div>
+{% endblock %}
