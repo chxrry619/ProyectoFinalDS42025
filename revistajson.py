@@ -31,14 +31,10 @@ def cargar_csvs(ruta, tipo):
         etiqueta = quitar_sufijo(archivo.stem)
         leido = False
 
+        # Intento con codificación automática
         codif = detectar_codificacion(archivo)
         try:
-            df = pd.read_csv(archivo, encoding=codif)
-            if 'TITULO:' in df.columns[0]:
-                df.columns = ['nombre_revista']  # Reasigna si tiene encabezado inválido
-            else:
-                df.rename(columns={df.columns[0]: 'nombre_revista'}, inplace=True)
-
+            df = pd.read_csv(archivo, encoding=codif, names=['nombre_revista'])
             df = df[df['nombre_revista'] != 'TITULO:']
             df[tipo] = etiqueta
             lista_df.append(df)
@@ -46,15 +42,11 @@ def cargar_csvs(ruta, tipo):
         except:
             pass
 
+        # Codificaciones de respaldo
         if not leido:
             for cod in posibles:
                 try:
-                    df = pd.read_csv(archivo, encoding=cod)
-                    if 'TITULO:' in df.columns[0]:
-                        df.columns = ['nombre_revista']
-                    else:
-                        df.rename(columns={df.columns[0]: 'nombre_revista'}, inplace=True)
-
+                    df = pd.read_csv(archivo, encoding=cod, names=['nombre_revista'])
                     df = df[df['nombre_revista'] != 'TITULO:']
                     df[tipo] = etiqueta
                     lista_df.append(df)
@@ -65,10 +57,10 @@ def cargar_csvs(ruta, tipo):
     return pd.concat(lista_df, ignore_index=True) if lista_df else pd.DataFrame()
 
 def generar_json():
-    print('Espere un momento, se están cargando las áreas...')
+    print('Cargando áreas...')
     df_areas = cargar_csvs(RUTA_AREAS, 'area')
 
-    print('Espere un momento, se están cargando catálogos...')
+    print('Cargando catálogos...')
     df_catalogos = cargar_csvs(RUTA_CATALOGOS, 'catalogo')
 
     revistas = {}
@@ -93,7 +85,7 @@ def generar_json():
     with open(SALIDA_JSON, 'w', encoding='utf-8') as f:
         json.dump(revistas, f, ensure_ascii=False, indent=2)
 
-    print(f'Se han procesado: {len(revistas)} revistas')
+    print(f'Total de revistas procesadas: {len(revistas)}')
 
 if __name__ == '__main__':
     generar_json()
