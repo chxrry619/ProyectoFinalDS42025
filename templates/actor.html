@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Movie database - {{actor.nombre}}{% endblock %}
+{% block body %}
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ actor.nombre }}</h1>
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="{{ actor.url_imagen }}" alt="{{ actor.nombre }} Poster" class="img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        
+                        <p class="card-text"><b>Fecha de nacimiento:</b> {{ actor.fecha_nacimiento }}</p>
+                        <p class="card-text"><b>Ciudad de nacimiento:</b> {{ actor.ciudad_nacimiento }}</p>
+                        <h5 class="card-subtitle mt-3">Películas</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Película</th>
+                                    <th>Personaje</th>
+                                    <th>Fecha de lanzamiento</th>
+                                    <th>Póster</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pelicula in lista_peliculas %}
+                                <tr>
+                                    <td><a href="/pelicula/{{ pelicula.pelicula.id_pelicula }}">{{ pelicula.pelicula.titulo_pelicula }}</a></td>
+                                    <td>{{ pelicula.personaje }}</td>
+                                    <td>{{ pelicula.pelicula.fecha_lanzamiento }}</td>
+                                    <td><a href="/pelicula/{{ pelicula.pelicula.id_pelicula }}"><img src="{{ pelicula.pelicula.url_poster }}" alt="{{ pelicula.pelicula.titulo_pelicula }}" style="width:100px;height:100px;"></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+{% endblock %}

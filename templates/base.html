@@ -37,7 +37,13 @@
 
       <!-- Menú de navegación -->
       <nav class="d-flex gap-4 align-items-center flex-wrap">
-        <a href="/" class="nav-link fw-medium">Inicio</a>
+        {% if session.get('username') %}
+          <!-- Si el usuario está logueado -->
+          <a href="{{ url_for('logout') }}" class="nav-link fw-medium">Cerrar sesión</a>
+        {% else %}
+          <!-- Si el usuario no está logueado -->
+          <a href="{{ url_for('login') }}" class="nav-link fw-medium">Iniciar sesión</a>
+        {% endif %}
         <a href="#" class="nav-link fw-medium">Área</a>
         <a href="#" class="nav-link fw-medium">Catálogos</a>
         <a href="#" class="nav-link fw-medium">Explorar</a>
