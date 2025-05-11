@@ -1,69 +1,18 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Universidad de Sonora</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 text-gray-800">
+{% extends 'base.html' %}
 
-  <!-- NAVBAR -->
-<header class="bg-white shadow-md">
-  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <!-- Aquí va el logotipo -->
-    <div class="flex items-center space-x-3">
-      <img src="src/logo.png" alt="Logo Universidad" class="h-10 w-auto" />
-      <span class="text-xl font-bold text-blue-600">Universidad de Sonora
-      </span>
-    </div>
-    <nav class="space-x-6">
-      <a href="#" class="hover:text-blue-600 font-medium">Inicio</a>
-      <a href="#" class="hover:text-blue-600 font-medium">Área</a>
-      <a href="#" class="hover:text-blue-600 font-medium">Catalogo</a>
-      <a href="#" class="hover:text-blue-600 font-medium">Explorar</a>
-      <a href="#" class="hover:text-blue-600 font-medium">Barras de búsqueda</a>
-      <a href="#" class="hover:text-blue-600 font-medium">Créditos</a>
-    </nav>
-  </div>
-</header>
+{% block title %}Inicio - Catálogo de Revistas{% endblock %}
 
-  <!-- HERO SECTION -->
-  <section class="bg-blue-600 text-white py-20">
-    <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-4xl font-bold mb-4">Universidad de Sonora</h2>
-      <p class="text-lg mb-6">Para empezar tu busqueda, inicia sesión</p>
-      <a href="#" class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-gray-100">Inicia sesión</a>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section class="py-16">
-    <div class="max-w-6xl mx-auto px-4">
-      <h3 class="text-2xl font-bold text-center mb-12">¿Por qué elegirnos?</h3>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-white shadow-md rounded-xl p-6 text-center">
-          <h4 class="text-xl font-semibold mb-2">Innovación</h4>
-          <p>Usamos tecnología de punta para ofrecerte soluciones únicas.</p>
-        </div>
-        <div class="bg-white shadow-md rounded-xl p-6 text-center">
-          <h4 class="text-xl font-semibold mb-2">Compromiso</h4>
-          <p>Nos enfocamos en ayudarte a alcanzar tus metas.</p>
-        </div>
-        <div class="bg-white shadow-md rounded-xl p-6 text-center">
-          <h4 class="text-xl font-semibold mb-2">Calidad</h4>
-          <p>Entregamos resultados con los más altos estándares.</p>
-        </div>
+{% block content %}
+  <div class="mt-4">
+    {% if query %}
+      <h5 class="mb-3">Resultados para: <span class="text-primary">"{{ query }}"</span></h5>
+      <!-- Aquí puedes renderizar resultados reales -->
+      <div class="alert alert-warning">
+        No se encontraron resultados para <strong>{{ query }}</strong>.
       </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="bg-gray-100 py-6 mt-10">
-    <div class="max-w-6xl mx-auto px-4 text-center text-sm text-gray-500">
-      &copy; 2025 Fuentes y Camargo. Todos los derechos reservados.
-    </div>
-  </footer>
-
-</body>
-</html>
+    {% else %}
+      <h3 class="mb-3">Bienvenido al Catálogo de Revistas</h3>
+      <p class="lead">Explora o busca revistas científicas clasificadas por el sitio <a href="https://www.scimagojr.com/" target="_blank">scimagojr.com</a>. Puedes comenzar buscando por nombre, área o categoría.</p>
+    {% endif %}
+  </div>
+{% endblock %}
