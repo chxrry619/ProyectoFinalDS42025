@@ -5,3 +5,8 @@ datos
 └── csv
     ├── areas
     └── catalogos
+static
+├── img
+templates
+
+Para este programa, se ha usado la ayuda de Github copilot y ChatGPT para la correción de errones y la optimización del código.
