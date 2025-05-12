@@ -6,43 +6,97 @@
 <div class="row">
     <div class="col-md-12">
         <h1 class="mb-4">Créditos</h1>
-        
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            <div class="col">
-                        <p class="card-text"><small class="text-muted">Universidad de Sonora</small></p>
-                        <p class="card-text"><small class="text-muted">Desarrollo IV</small></p>
-                        <h5 class="card-title">Fuentes Padilla Aarón Esteban</h5>
-                        <h5 class="card-title">Camargo Loaiza Miguel Ángel</h5>
-                        <h5 class="card-title">Pacheco Olivas Juan Pablo Valentin</h5>
-                        <p class="card-text"></p>
-                        <h5 class="card-title">Acerca del Proyecto</h5>
-        <p>Este sistema fue desarrollado como parte del proyecto final de la carrera de <strong>Data Science</strong> en la <strong>Universidad de Sonora (UNISON)</strong>. El objetivo principal es ofrecer una plataforma interactiva para explorar revistas científicas, con especial énfasis en el análisis de su índice H (H-Index) y otros parámetros relevantes. A continuación, se describen las tecnologías y herramientas utilizadas en el desarrollo del sistema:</p>
-        
-        <h6>1. Tecnologías utilizadas en el backend</h6>
-        <p><strong>Python con Flask:</strong> Flask es un microframework web basado en Python que facilita la creación de aplicaciones web dinámicas. Se utilizó para manejar las rutas, la gestión de sesiones y la comunicación con las bases de datos, entre otras funcionalidades esenciales del sistema.</p>
-        
-        <h6>2. Diseño responsivo</h6>
-        <p><strong>Bootstrap 5:</strong> Bootstrap es un framework de diseño responsivo que permite crear interfaces de usuario adaptables a diferentes tamaños de pantalla. Gracias a esta herramienta, el sistema garantiza una experiencia óptima tanto en dispositivos móviles como en computadoras de escritorio.</p>
-        
-        <h6>3. Funcionalidades interactivas</h6>
-        <p><strong>DataTables:</strong> DataTables es una librería de JavaScript que se integra fácilmente con tablas HTML para proporcionar características avanzadas como la búsqueda, la paginación y el ordenamiento dinámico de los datos. En nuestro sistema, se utiliza para mostrar los datos de las revistas científicas de forma ordenada y fácil de explorar.</p>
-        
-        <h6>4. Extracción de datos desde la web</h6>
-        <p><strong>Beautiful Soup:</strong> Beautiful Soup es una librería de Python para el web scraping, utilizada para extraer información de páginas web. Esta herramienta nos permitió obtener datos de revistas científicas desde fuentes externas como SCImago y otros catálogos de revistas.</p>
 
-        <h6>5. Fuentes de datos</h6>
-        <p>Los datos utilizados en el sistema provienen de las siguientes fuentes:</p>
-        <ul>
-            <li><strong>SCImago Journal Rank (SJR):</strong> SJR es una base de datos que clasifica las revistas científicas a nivel mundial según su impacto y visibilidad. Utilizamos esta fuente para obtener el índice H (H-Index) de las revistas.</li>
-            <li><strong>Catálogos institucionales de la UNISON:</strong> La Universidad de Sonora ofrece catálogos académicos que contienen información relevante sobre revistas científicas relacionadas con sus programas de investigación.</li>
-        </ul>
-        
-        <h6>6. Propósito del sistema</h6>
-        <p>El propósito de este sistema es proporcionar a los investigadores, estudiantes y académicos una herramienta accesible y fácil de usar para explorar revistas científicas y obtener información detallada sobre su impacto y visibilidad. El sistema permite la consulta de revistas en diversas áreas científicas y facilita la comparación de indicadores como el índice H, lo que puede ser útil para quienes buscan información actualizada sobre publicaciones científicas.</p>
-        
-                    </div>
-                </div>
-            </div>
-                 
+        <div class="table-responsive">
+            <table class="table table-striped" id="creditosTable">
+                <thead>
+                    <tr>
+                        <th>Sección</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Universidad</td>
+                        <td>Universidad de Sonora</td>
+                    </tr>
+                    <tr>
+                        <td>Asignatura</td>
+                        <td>Desarrollo IV</td>
+                    </tr>
+                    <tr>
+                        <td>Integrantes</td>
+                        <td>
+                            Fuentes Padilla Aarón Esteban<br>
+                            Camargo Loaiza Miguel Ángel<br>
+                            Pacheco Olivas Juan Pablo Valentin
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Acerca del Proyecto</td>
+                        <td>
+                            Sistema desarrollado como parte del proyecto final de la carrera de Data Science en la UNISON. Su objetivo es explorar revistas científicas con énfasis en el H-Index y otros parámetros relevantes.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tecnologías Backend</td>
+                        <td>
+                            <strong>Python con Flask:</strong> microframework para manejo de rutas, sesiones y lógica del servidor.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Diseño Responsivo</td>
+                        <td>
+                            <strong>Bootstrap 5:</strong> framework CSS para crear interfaces adaptables a distintos dispositivos.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Interactividad</td>
+                        <td>
+                            <strong>DataTables:</strong> librería para búsqueda, ordenamiento y paginación de tablas HTML.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Web Scraping</td>
+                        <td>
+                            <strong>Beautiful Soup 4.9.3:</strong> librería de Python para extraer datos estructurados desde sitios como SCImago.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fuentes de Datos</td>
+                        <td>
+                            <strong>SCImago Journal Rank (SJR):</strong> datos de impacto de revistas.<br>
+                            <strong>Catálogos UNISON:</strong> información institucional sobre revistas científicas.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Propósito</td>
+                        <td>
+                            Ofrecer a investigadores y estudiantes una herramienta para explorar revistas científicas y comparar su impacto a través del H-Index.
+                        </td>
+                    </tr>
+                                            <td>Inteligencias Artificiales usadas</td>
+                        <td>
+                            <strong>ChatGPT y Github Copilot</strong> 
+                        </td>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#creditosTable').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        },
+        paging: false,
+        searching: false,
+        info: false
+    });
+});
+</script>
 {% endblock %}
