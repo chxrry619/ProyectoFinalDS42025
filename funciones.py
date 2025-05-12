@@ -177,22 +177,22 @@ class SistemaRevistas:
         )
     
     def guardar_revista(usuario, revista):
-    ruta_archivo = os.path.join(RUTA_GUARDADOS, f"{usuario}.json")
+        ruta_archivo = os.path.join(RUTA_GUARDADOS, f"{usuario}.json")
     
-    # Cargar datos previos
-    if os.path.exists(ruta_archivo):
-        with open(ruta_archivo, "r", encoding="utf-8") as f:
-            guardadas = json.load(f)
-    else:
-        guardadas = []
+        # Cargar datos previos
+        if os.path.exists(ruta_archivo):
+            with open(ruta_archivo, "r", encoding="utf-8") as f:
+                guardadas = json.load(f)
+        else:
+            guardadas = []
 
-    # Evitar duplicados
-    if revista not in guardadas:
-        guardadas.append(revista)
-        with open(ruta_archivo, "w", encoding="utf-8") as f:
-            json.dump(guardadas, f, indent=4, ensure_ascii=False)
-        return True
-    return False
+        # Evitar duplicados
+        if revista not in guardadas:
+            guardadas.append(revista)
+            with open(ruta_archivo, "w", encoding="utf-8") as f:
+                json.dump(guardadas, f, indent=4, ensure_ascii=False)
+            return True
+        return False
 
     def revistas_por_catalogo(self, catalogo):
         """Obtiene las revistas asociadas a un catálogo específico con su h_index y área."""
