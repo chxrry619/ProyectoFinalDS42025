@@ -88,25 +88,29 @@ def catalogo_detalle(catalogo):
 @app.route('/explorar')
 def explorar():
     letra = request.args.get('letra', '').upper()
+    area_filtro = request.args.get('area', '')
     page = int(request.args.get('page', 1))
-    por_pagina = 10
+    por_pagina = 50
 
+    # Obtener todas las revistas
     todas_revistas = list(sistema.revistas.values())
 
+    # Filtrar por letra inicial del nombre
     if letra:
         todas_revistas = [r for r in todas_revistas if r.nombre.upper().startswith(letra)]
 
+    # Filtrar por área
+    if area_filtro:
+        todas_revistas = [r for r in todas_revistas if r.subject_area_category == area_filtro]
+
+    # Total de páginas
     total_paginas = (len(todas_revistas) - 1) // por_pagina + 1
     inicio = (page - 1) * por_pagina
     fin = inicio + por_pagina
     revistas_pagina = todas_revistas[inicio:fin]
 
-    # Letras disponibles para el filtro
-    letras = sorted(set(r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre))
-
-    # Diccionario enriquecido que usará la plantilla
+    # Crear diccionario enriquecido
     revistas_dict = {}
-
     for r in revistas_pagina:
         catalogos = [
             nombre_cat for nombre_cat, revistas in sistema.catalogos_data.items()
@@ -120,16 +124,22 @@ def explorar():
             'areas': areas
         }
 
+    # Para el filtro
+    letras = sorted(set(r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre))
+    areas_disponibles = sorted(set(r.subject_area_category for r in sistema.revistas.values() if r.subject_area_category))
+
     return render_template(
         'explorar.html',
-        revistas=revistas_dict.items(),  # así lo espera tu plantilla: (titulo, info)
+        revistas=revistas_dict.items(),
         scimagojr=sistema.scimagojr,
         page=page,
         total_pages=total_paginas,
         letras=letras,
-        letra_actual=letra
+        letra_actual=letra,
+        areas=areas_disponibles,
+        area_actual=area_filtro
     )
-
+    
 @app.route('/creditos')
 def creditos():
     return render_template('creditos.html')
