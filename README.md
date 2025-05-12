@@ -53,7 +53,7 @@ El archivo enriquecido revistas_scimagojr.json se guarda en datos/json/.
 ### Parte 3: Sitio front-end para consultar las revistas
 Interfaz web interactiva: Presenta la información de las revistas de forma clara y accesible para los usuarios.
 
-- Objetivo: Permitir a estudiantes e investigadores consultar el catálogo de revistas académicas con filtros y búsqueda por nombre, área o cuartil.
+Objetivo: Permitir a estudiantes e investigadores consultar el catálogo de revistas académicas con filtros y búsqueda por nombre, área o cuartil.
 Se creó una aplicación web utilizando el framework Flask junto con Bootstrap para el diseño responsivo. La aplicación carga los datos desde el archivo JSON generado en las fases anteriores y los muestra en una tabla interactiva. Se implementaron funciones para buscar revistas por palabra clave, filtrar por cuartil o área temática, y visualizar detalles relevantes como el ranking y la categoría. La interfaz está pensada para facilitar el acceso a información académica actualizada y confiable.
 
 ##Funcionalidades
