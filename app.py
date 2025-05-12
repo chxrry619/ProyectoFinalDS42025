@@ -9,17 +9,17 @@ app.secret_key = 'clave_secreta_super_segura'
 
 # Inicializar sistema
 sistema = SistemaRevistas()
+sistema.cargar_usuarios_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\users\users.csv')
 sistema.cargar_areas_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\areas')
 sistema.cargar_catalogos_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\catalogos')
 sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
-sistema.cargar_usuarios_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\users\users.csv')
+
 
 @app.route('/')
 def index():
     if 'usuario' not in session:
         return redirect(url_for('login'))  
 
-   
     usuario = session['usuario']
     return render_template('index.html', usuario=usuario)
 
@@ -92,15 +92,10 @@ def explorar():
     page = int(request.args.get('page', 1))
     por_pagina = 10 
 
-
     sistema = SistemaRevistas()
-
-
     sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
 
-
     todas = list(sistema.revistas.items())  
-
 
     if letra:
         todas = [(k, v) for k, v in todas if k.upper().startswith(letra)]
