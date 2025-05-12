@@ -123,7 +123,29 @@ class SistemaRevistas:
         return list(self.catalogos_data.keys())
 
     def revistas_por_catalogo(self, nombre_catalogo):
-        return self.catalogos_data.get(nombre_catalogo, [])
+        revistas_crudas = self.catalogos_data.get(nombre_catalogo, [])
+        revistas = []
+
+        for fila in revistas_crudas:
+            # Intenta obtener el nombre de la revista desde distintas posibles claves
+            nombre = (
+                fila.get('Nombre de la revista') or
+                fila.get('TITULO:e') or
+                fila.get('Revista') or
+                fila.get('Title') or
+                "Revista Desconocida"
+            )
+
+            # Intenta obtener el H-Index
+            h_index = fila.get('H-Index') or fila.get('h_index') or fila.get('IndiceH') or "0"
+            try:
+                h_index = int(h_index)
+            except ValueError:
+                h_index = 0
+
+            revistas.append({'nombre': nombre, 'h_index': h_index})
+
+        return revistas
 
     def agregar_usuario(self, username, nombre_completo, email, password):
         if username not in self.usuarios:
