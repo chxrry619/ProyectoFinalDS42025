@@ -17,9 +17,9 @@ sistema.cargar_usuarios_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS4202
 @app.route('/')
 def index():
     if 'usuario' not in session:
-        return redirect(url_for('login'))  # Si no hay usuario en la sesión, redirige al login
+        return redirect(url_for('login'))  
 
-    # Si hay usuario en la sesión, pasa el nombre de usuario a la plantilla
+   
     usuario = session['usuario']
     return render_template('index.html', usuario=usuario)
 
@@ -38,8 +38,8 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('usuario', None)  # Elimina el 'usuario' de la sesión
-    return redirect(url_for('index'))  # Redirige a la página principal
+    session.pop('usuario', None)  
+    return redirect(url_for('index')) 
 
 @app.route('/buscar', methods=['GET', 'POST'])
 def buscar():
@@ -67,21 +67,12 @@ def listar_areas():
     areas = sistema.areas_disponibles()
     return render_template('areas.html', areas=areas)
 
-@app.route('/area/<area>')
-def detalle_area(area):
-    revistas = sistema.revistas_por_area(area)
-    revistas_dict = {
-        r.nombre: {
-            'h_index': r.h_index,
-            'categorias': r.subject_area_category
-        } for r in revistas
-    }
 
-    return render_template(
-        'area_detalle.html',
-        area=area,
-        revistas=revistas_dict
-    )
+@app.route('/area/<area>')
+def area_detalle(area):
+    revistas = sistema.revistas_por_area(area)
+    return render_template('area_detalle.html', area=area, revistas=revistas)
+    
 
 @app.route('/catalogos')
 def catalogos():
@@ -91,41 +82,40 @@ def catalogos():
 @app.route('/catalogo/<catalogo>')
 def catalogo_detalle(catalogo):
     revistas = sistema.revistas_por_catalogo(catalogo)
-    return render_template('detalle_catalogo.html', catalogo=catalogo, revistas=revistas)
+    print(f"Revistas en el catálogo {catalogo}: {revistas}")
+    return render_template('catalogo_detalle.html', catalogo=catalogo, revistas=revistas)
 
 
 @app.route('/explorar')
 def explorar():
     letra = request.args.get('letra', '').upper()
     page = int(request.args.get('page', 1))
-    por_pagina = 10  # Número de resultados por página
+    por_pagina = 10 
 
-    # Crear una instancia del sistema
+
     sistema = SistemaRevistas()
 
-    # Cargar los datos de SCImago en el sistema
+
     sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
 
-    # Obtener todas las revistas (esto asume que 'revistas' ya está cargado)
-    todas = list(sistema.revistas.items())  # Convierte dict_items a lista
 
-    # Filtrar revistas por letra (si se pasa una letra en la URL)
+    todas = list(sistema.revistas.items())  
+
+
     if letra:
         todas = [(k, v) for k, v in todas if k.upper().startswith(letra)]
 
-    # Calcular paginación
     total_paginas = (len(todas) - 1) // por_pagina + 1
     inicio = (page - 1) * por_pagina
     fin = inicio + por_pagina
     revistas_pagina = todas[inicio:fin]
 
-    # Generar lista de letras disponibles para la navegación
     letras = sorted(set(r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre))
 
     return render_template(
         'explorar.html',
         revistas=revistas_pagina,
-        scimagojr=sistema.scimagojr,  # Ahora pasamos el scimagojr correctamente
+        scimagojr=sistema.scimagojr,  
         page=page,
         total_pages=total_paginas,
         letras=letras,
@@ -139,14 +129,8 @@ def creditos():
 
 @app.route('/revista/<titulo>')
 def revista_detalle(titulo):
-    # Aquí puedes cargar los detalles de la revista usando el título
-    # Por ejemplo, si tienes un diccionario de revistas, puedes buscarla por título
-    revista = sistema.revistas.get(titulo)
-    if revista:
-        return render_template('revista_detalle.html', revista=revista)
-    else:
-        flash('Revista no encontrada.', 'danger')
-        return redirect(url_for('explorar'))
+    revista = sistema.revistas.get(titulo.lower())
+    return render_template('revista_detalle.html', revista=revista)
 
 @app.route('/resumen')
 def resumen():

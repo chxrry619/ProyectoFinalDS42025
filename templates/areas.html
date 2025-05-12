@@ -8,8 +8,7 @@
     <ul class="list-group">
         {% for area in areas %}
         <li class="list-group-item">
-            <a href="{{ url_for('detalle_area', area=area|string) }}">{{ area }}</a>
-
+            <a href="{{ url_for('area_detalle', area=area) }}">{{ area }}</a>
         </li>
         {% endfor %}
     </ul>

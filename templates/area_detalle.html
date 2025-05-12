@@ -16,12 +16,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for titulo, datos in revistas.items() %}
+                    {% for revista in revistas %}
                     <tr>
                         <td>
-                            <a href="{{ url_for('revista_detalle', titulo=titulo) }}">{{ titulo }}</a>
+                            <a href="{{ url_for('revista_detalle', titulo=revista['nombre']) }}">{{ revista['nombre'] }}</a>
                         </td>
-                        <td>{{ datos.h_index }}</td>
+                        <td>{{ revista['h_index'] }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -38,7 +38,7 @@ $(document).ready(function() {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
         },
-        order: [[1, 'desc']],
+        order: [[1, 'desc']], // Ordenar por H-Index descendente
         pageLength: 25
     });
 });

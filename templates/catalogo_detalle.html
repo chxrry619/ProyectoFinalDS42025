@@ -17,16 +17,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for titulo, info in revistas.items() %}
+                    {% for revista in revistas %}
                     <tr>
                         <td>
-                            <a href="{{ url_for('revista_detalle', titulo=titulo) }}">{{ titulo }}</a>
+                            <a href="{{ url_for('revista_detalle', titulo=revista['nombre']) }}">{{ revista['nombre'] }}</a>
                         </td>
                         <td>
-                            {{ scimagojr.get(titulo, {}).get('h_index', 'N/A') }}
+                            {{ revista['h_index'] }}
                         </td>
                         <td>
-                            {% for area in info['areas'] %}
+                            {% for area in revista['subject_area_category'] %}
                             <a href="{{ url_for('area_detalle', area=area) }}" 
                                class="badge bg-secondary text-decoration-none me-1">
                                 {{ area }}

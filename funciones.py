@@ -9,7 +9,7 @@ class Revista:
         self.site = site
         self.h_index = int(h_index) if isinstance(h_index, (int, float)) else 0
         self.subject_area_category = subject_area_category
-        self.catalogos = []  # Si lo necesitas más adelante
+        self.catalogos = []
 
     def to_dict(self):
         return {
@@ -21,7 +21,6 @@ class Revista:
 
     def __str__(self):
         return f"{self.nombre} ({self.h_index})"
-
 
 class Usuario:
     def __init__(self, username, nombre_completo, email, password):
@@ -41,17 +40,21 @@ class Usuario:
             'password': self.password
         }
 
-
 class SistemaRevistas:
-    def __init__(self, ruta_json=None):
+    def __init__(self):
+        self.revistas = {}
         self.usuarios = {}
         self.usuario_actual = None
         self.areas_data = {}
         self.catalogos_data = {}
-        self.revistas = {}  # Diccionario de revistas
-        self.scimagojr = {}  # Diccionario de datos SCImago
-        if ruta_json:
-            self.cargar_json(ruta_json)
+        self.scimagojr = {}
+
+        # Carga automática al iniciar
+        ruta_json = r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json'
+        carpeta_catalogos = r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\catalogos'
+
+        self.cargar_json(ruta_json)
+        self.cargar_catalogos_desde_csv(carpeta_catalogos)
 
     def cargar_json(self, ruta_archivo):
         try:
@@ -108,7 +111,6 @@ class SistemaRevistas:
             'SCOPUS_RadGridExport.csv': 'Scopus'
         }
 
-        self.catalogos_data = {}
         for filename in os.listdir(carpeta_catalogos):
             if filename.endswith(".csv") and filename in mapeo_catalogos:
                 catalogo_nombre = mapeo_catalogos[filename]
@@ -144,7 +146,6 @@ class SistemaRevistas:
             'MULTI RadGridExport.csv': 'Multidisciplinario'
         }
 
-        self.areas_data = {}
         for filename in os.listdir(carpeta_areas):
             if filename.endswith(".csv") and filename in mapeo_nombres:
                 area_nombre = mapeo_nombres[filename]
@@ -156,8 +157,18 @@ class SistemaRevistas:
     def buscar_revistas_por_nombre(self, fragmento):
         return [r for r in self.revistas.values() if fragmento.lower() in r.nombre.lower()]
 
-    def revistas_por_area(self, nombre_area):
-        return self.areas_data.get(nombre_area, [])
+    def revistas_por_area(self, area):
+        revistas_crudas = self.areas_data.get(area, [])
+        revistas = []
+        for fila in revistas_crudas:
+            nombre = fila.get('TITULO:') or fila.get('titulo') or "Revista Desconocida"
+            h_index = fila.get('H-Index') or fila.get('h_index') or "0"
+            try:
+                h_index = int(h_index)
+            except ValueError:
+                h_index = 0
+            revistas.append({'nombre': nombre, 'h_index': h_index})
+        return revistas
 
     def areas_disponibles(self):
         return list(self.areas_data.keys())
@@ -173,7 +184,7 @@ class SistemaRevistas:
 
     def top_revistas_por_area(self, area, limite=10):
         filtradas = self.revistas_por_area(area)
-        return sorted(filtradas, key=lambda r: r['H-Index'], reverse=True)[:limite]
+        return sorted(filtradas, key=lambda r: r['h_index'], reverse=True)[:limite]
 
     def exportar_json(self, archivo_salida='revistas_exportadas.json'):
         data = {r.nombre: r.to_dict() for r in self.revistas.values()}
