@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.secret_key = 'clave_secreta_super_segura'
 
-# Inicializar sistema
 sistema = SistemaRevistas()
 RUTA_GUARDADOS = r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\guardados'
 sistema.cargar_usuarios_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\users\users.csv')
@@ -42,11 +41,9 @@ def index():
         ultima_visita = datetime.min
 
     periodo_actualizacion = timedelta(days=30)
-    # Si la fecha de la última visita es más antigua que el periodo de actualización, actualizar datos
     if datetime.now() - ultima_visita > periodo_actualizacion:
-        # Aquí agregarías la lógica para actualizar los datos de SCIMAGO
         actualizar_datos_scimago()
-        session['ultima_visita'] = datetime.now().strftime('%Y-%m-%d')  # Actualiza la fecha de visita
+        session['ultima_visita'] = datetime.now().strftime('%Y-%m-%d')  
     if 'usuario' not in session:
         return redirect(url_for('login'))  
 
@@ -54,7 +51,6 @@ def index():
     return render_template('index.html', usuario=usuario, ultima_visita=ultima_visita, datetime=datetime)
 
 def actualizar_datos_scimago():
-    # Aquí va el código para hacer scraping o acceder a SCIMAGO y actualizar los datos
     print("Actualizando datos de SCIMAGO...")
 
 
@@ -85,13 +81,12 @@ def buscar():
         if termino:
             for nombre_revista, revista in sistema.revistas.items():
                 if termino in nombre_revista:
-                    # Buscar catálogos en los que está
+
                     catalogos = []
                     for nombre_catalogo, revistas in sistema.catalogos_data.items():
                         if any(r['nombre'].strip().lower() == nombre_revista for r in revistas):
                             catalogos.append(nombre_catalogo)
 
-                    # Buscar áreas en las que está
                     areas = []
                     for nombre_area, revistas in sistema.areas_data.items():
                         if any(r['nombre'].strip().lower() == nombre_revista for r in revistas):
@@ -142,7 +137,7 @@ def catalogos():
 @app.route('/catalogo/<catalogo>')
 @login_required
 def catalogo_detalle(catalogo):
-    revistas = sistema.revistas_por_catalogo(catalogo)  # Ahora debería funcionar
+    revistas = sistema.revistas_por_catalogo(catalogo)  
     return render_template('catalogo_detalle.html', catalogo=catalogo, revistas=revistas)
 
 
@@ -154,40 +149,35 @@ def explorar():
     page = int(request.args.get('page', 1))
     por_pagina = 50
 
-    # Obtener todas las revistas
-    todas_revistas = list(sistema.revistas.values())
 
-    # Filtrar por letra inicial del nombre
+    todas_revistas = list(sistema.revistas.values())
     if letra:
         todas_revistas = [r for r in todas_revistas if r.nombre.upper().startswith(letra)]
 
-    # Filtrar por área usando los nombres mapeados
+
     if area_filtro:
         nombres_area = {revista['nombre'].strip().lower() for revista in sistema.areas_data.get(area_filtro, [])}
         todas_revistas = [r for r in todas_revistas if r.nombre.strip().lower() in nombres_area]
 
-    # Paginación (versión corregida)
     total_paginas = (len(todas_revistas) - 1) // por_pagina + 1
     inicio = (page - 1) * por_pagina
     fin = inicio + por_pagina
     revistas_pagina = todas_revistas[inicio:fin]
 
-    # Crear diccionario con datos enriquecidos
     revistas_dict = {}
     for revista in revistas_pagina:
-        # Buscar áreas mapeadas
         areas_revista = [
             nombre_area for nombre_area, revistas_area in sistema.areas_data.items()
             if any(revista.nombre.lower() == r['nombre'].strip().lower() for r in revistas_area)
         ]
         
-        # Buscar catálogos
+
         catalogos_revista = [
             nombre_cat for nombre_cat, revistas_cat in sistema.catalogos_data.items()
             if any(revista.nombre.lower() == r['nombre'].strip().lower() for r in revistas_cat)
         ]
 
-        # Obtener h_index (versión corregida con paréntesis)
+
         nombre_normalizado = revista.nombre.strip().lower()
         h_index = next(
             (info.get('h_index') for nombre, info in sistema.scimagojr.items()
@@ -200,7 +190,6 @@ def explorar():
             'areas': areas_revista
         }
 
-    # Obtener letras y áreas disponibles
     letras = sorted({r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre})
     areas_disponibles = sorted(sistema.areas_data.keys())
 
@@ -222,15 +211,13 @@ def creditos():
 
 @app.route('/revista/<titulo>')
 def revista_detalle(titulo):
-    # Obtener la revista por su nombre (asegurándote de que el título está en el formato correcto)
     revista = sistema.revistas.get(titulo)
     
-    # Si no se encuentra la revista, redirigir o mostrar un error
+
     if not revista:
         flash('Revista no encontrada', 'danger')
         return redirect(url_for('index'))
-    
-    # Mostrar la plantilla con los detalles de la revista
+
     return render_template('revista_detalle.html', revista=revista)
 
 @app.route('/resumen')
