@@ -84,7 +84,6 @@ def catalogo_detalle(catalogo):
     revistas = sistema.revistas_por_catalogo(catalogo)  # Ahora debería funcionar
     return render_template('catalogo_detalle.html', catalogo=catalogo, revistas=revistas)
 
-
 @app.route('/explorar')
 def explorar():
     letra = request.args.get('letra', '').upper()
@@ -118,15 +117,21 @@ def explorar():
         ]
         areas = [r.subject_area_category] if r.subject_area_category else []
 
+        nombre_normalizado = r.nombre.strip().lower()
+        h_index = next(
+            (info.get('h_index') for nombre, info in sistema.scimagojr.items()
+             if nombre.strip().lower() == nombre_normalizado),
+            r.h_index
+        )
+
         revistas_dict[r.nombre] = {
-            'h_index': r.h_index,
+            'h_index': h_index,
             'catalogos': catalogos,
             'areas': areas
         }
 
-    # Para el filtro
     letras = sorted(set(r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre))
-    areas_disponibles = sorted(set(r.subject_area_category for r in sistema.revistas.values() if r.subject_area_category))
+    areas_disponibles = sistema.areas_disponibles()
 
     return render_template(
         'explorar.html',
