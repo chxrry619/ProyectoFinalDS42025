@@ -2,34 +2,41 @@
 {% block title %}Buscar Revistas{% endblock %}
 
 {% block content %}
-<h2>Buscar Revistas</h2>
-<form method="post">
-    <input type="text" name="termino" placeholder="Palabra clave...">
-    <button type="submit">Buscar</button>
+<h2 class="mt-4">Buscar Revistas</h2>
+
+<form method="post" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="termino" class="form-control" placeholder="Palabra clave...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
 </form>
 
 {% if resultados %}
-<table border="1">
-    <thead>
-        <tr>
-            <th>Título</th>
-            <th>H-Index</th>
-            <th>Catálogos</th>
-            <th>Áreas</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in resultados %}
-        <tr>
-            <td><a href="{{ url_for('detalle_revista', nombre=r.nombre) }}">{{ r.nombre }}</a></td>
-            <td>{{ r.h_index }}</td>
-            <td>{{ ", ".join(r.catalogos) }}</td>
-            <td>{{ ", ".join(r.areas) }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Título</th>
+                <th scope="col">H-Index</th>
+                <th scope="col">Catálogos</th>
+                <th scope="col">Áreas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in resultados %}
+            <tr>
+                <td><a href="{{ url_for('revista_detalle', titulo=r.nombre) }}">{{ r.nombre }}</a></td>
+                <td>{{ r.h_index }}</td>
+                <td>{{ ", ".join(r.catalogos) }}</td>
+                <td>{{ ", ".join(r.areas) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% elif request.method == 'POST' %}
-<p>No se encontraron revistas con ese término.</p>
+<div class="alert alert-warning mt-4" role="alert">
+    No se encontraron revistas con ese término.
+</div>
 {% endif %}
 {% endblock %}

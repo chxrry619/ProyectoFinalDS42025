@@ -1,29 +1,51 @@
 {% extends "base.html" %}
-
-{% block title %}{{ revista.nombre }} - Sistema de Revistas UNISON{% endblock %}
+{% block title %}{{ revista.nombre }} - Detalle{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <h1 class="mb-4">{{ revista.nombre }}</h1>
-        
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Información de la Revista</h5>
-                
-                <p><strong>Site:</strong> <a href="{{ revista.site }}" target="_blank">{{ revista.site }}</a></p>
-                <p><strong>H-Index:</strong> {{ revista.h_index }}</p>
-                <p><strong>Subject Area Category:</strong> {{ revista.subject_area_category }}</p>
-                <p><strong>Publisher:</strong> {{ revista.publisher }}</p>
-                <p><strong>ISSN:</strong> {{ revista.issn }}</p>
-                <p><strong>Widget:</strong> {{ revista.widget }}</p>
-                <p><strong>Publication Type:</strong> {{ revista.publication_type }}</p>
-                <p><strong>URL:</strong> <a href="{{ revista.url }}" target="_blank">{{ revista.url }}</a></p>
-                <p><strong>ID:</strong> {{ revista.id }}</p>
-                
-                <a href="{{ url_for('explorar') }}" class="btn btn-primary">Volver a explorar</a>
-            </div>
-        </div>
-    </div>
-</div>
+<h2>Detalles de la Revista</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Nombre</th>
+        <td>{{ revista.nombre }}</td>
+    </tr>
+    <tr>
+        <th>Sitio</th>
+        <td><a href="{{ revista.site }}" target="_blank">{{ revista.site }}</a></td>
+    </tr>
+    <tr>
+        <th>H-Index</th>
+        <td>{{ revista.h_index }}</td>
+    </tr>
+    <tr>
+        <th>Área temática</th>
+        <td>{{ revista.subject_area_category }}</td>
+    </tr>
+    <tr>
+        <th>Publisher</th>
+        <td>{{ revista.publisher or 'No disponible' }}</td>
+    </tr>
+    <tr>
+        <th>ISSN</th>
+        <td>{{ revista.issn or 'No disponible' }}</td>
+    </tr>
+    <tr>
+        <th>Widget</th>
+        <td>{% if revista.widget %}{{ revista.widget | safe }}{% else %}No disponible{% endif %}</td>
+    </tr>
+    <tr>
+        <th>Tipo de publicación</th>
+        <td>{{ revista.publication_type or 'No disponible' }}</td>
+    </tr>
+    <tr>
+        <th>URL</th>
+        <td><a href="{{ revista.url }}" target="_blank">{{ revista.url }}</a></td>
+    </tr>
+    <tr>
+        <th>ID</th>
+        <td>{{ revista.id or 'No disponible' }}</td>
+    </tr>
+</table>
+
+<a href="{{ url_for('index') }}" class="btn btn-secondary">Volver al inicio</a>
 {% endblock %}

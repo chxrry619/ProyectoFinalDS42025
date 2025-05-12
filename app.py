@@ -23,6 +23,8 @@ def index():
     usuario = session['usuario']
     return render_template('index.html', usuario=usuario)
 
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
