@@ -41,13 +41,33 @@ def logout():
     session.pop('usuario', None)  
     return redirect(url_for('index')) 
 
-@app.route('/buscar', methods=['GET', 'POST'])
+@app.route("/buscar", methods=["GET", "POST"])
 def buscar():
     resultados = []
-    if request.method == 'POST':
-        termino = request.form['termino']
-        resultados = sistema.buscar_revistas_por_nombre(termino)
-    return render_template('buscar.html', resultados=resultados)
+    if request.method == "POST":
+        termino = request.form.get("termino", "").lower()
+        if termino:
+            for nombre_revista, revista in sistema.revistas.items():
+                if termino in nombre_revista:
+                    # Buscar catálogos en los que está
+                    catalogos = []
+                    for nombre_catalogo, revistas in sistema.catalogos_data.items():
+                        if any(r['nombre'].strip().lower() == nombre_revista for r in revistas):
+                            catalogos.append(nombre_catalogo)
+
+                    # Buscar áreas en las que está
+                    areas = []
+                    for nombre_area, revistas in sistema.areas_data.items():
+                        if any(r['nombre'].strip().lower() == nombre_revista for r in revistas):
+                            areas.append(nombre_area)
+
+                    resultados.append({
+                        "nombre": revista.nombre,
+                        "h_index": revista.h_index,
+                        "catalogos": catalogos,
+                        "areas": areas
+                    })
+    return render_template("buscar.html", resultados=resultados)
 
 @app.route('/top')
 def top():

@@ -21,19 +21,7 @@
             </div>
         </div>
 
-        <!-- Filtrar por área -->
-        <div class="mb-4">
-            <h5>Filtrar por área:</h5>
-            <div class="d-flex flex-wrap">
-                {% for area in areas_disponibles %}
-                <a href="{{ url_for('explorar', area=area, letra=letra_actual) }}"
-                   class="badge bg-primary text-white text-decoration-none me-2 mb-2 {% if area == area_actual %}border border-2 border-dark{% endif %}">
-                    {{ area }}
-                </a>
-                {% endfor %}
-                <a href="{{ url_for('explorar', letra=letra_actual) }}" class="badge bg-dark text-white text-decoration-none mb-2">Todas</a>
-            </div>
-        </div>
+
 
         <!-- Tabla de revistas -->
         <div class="table-responsive">

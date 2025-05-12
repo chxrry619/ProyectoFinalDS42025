@@ -4,11 +4,17 @@ import json
 from hashlib import sha256
 
 class Revista:
-    def __init__(self, nombre, site, h_index, subject_area_category):
+    def __init__(self, nombre, site, h_index, subject_area_category, publisher, issn, widget, publication_type, url, id_):
         self.nombre = nombre
         self.site = site
         self.h_index = int(h_index) if isinstance(h_index, (int, float, str)) and str(h_index).isdigit() else 0
         self.subject_area_category = subject_area_category
+        self.publisher = publisher
+        self.issn = issn
+        self.widget = widget
+        self.publication_type = publication_type
+        self.url = url
+        self.id = id_
         self.catalogos = []
 
     def to_dict(self):
@@ -16,7 +22,13 @@ class Revista:
             'nombre': self.nombre,
             'site': self.site,
             'h_index': self.h_index,
-            'subject_area_category': self.subject_area_category
+            'subject_area_category': self.subject_area_category,
+            'publisher': self.publisher,
+            'issn': self.issn,
+            'widget': self.widget,
+            'publication_type': self.publication_type,
+            'url': self.url,
+            'id': self.id
         }
 
     def __str__(self):
@@ -60,11 +72,18 @@ class SistemaRevistas:
             with open(ruta_archivo, 'r', encoding='utf-8') as file:
                 data = json.load(file)
                 for nombre, revista_data in data.items():
+                    # Aquí incluimos los nuevos campos
                     revista = Revista(
                         nombre=nombre,
                         site=revista_data['site'],
                         h_index=revista_data['h_index'],
-                        subject_area_category=revista_data['subject_area_category']
+                        subject_area_category=revista_data['subject_area_category'],
+                        publisher=revista_data.get('publisher', 'Desconocido'),
+                        issn=revista_data.get('issn', 'Desconocido'),
+                        widget=revista_data.get('widget', 'Desconocido'),
+                        publication_type=revista_data.get('publication_type', 'Desconocido'),
+                        url=revista_data.get('url', 'Desconocido'),
+                        id_=revista_data.get('id', 'Desconocido')
                     )
                     self.revistas[nombre.lower()] = revista
             print(f"Revistas cargadas: {len(self.revistas)}")
@@ -97,7 +116,7 @@ class SistemaRevistas:
                             nombre = fila.get('TITULO:') or fila.get('Título') or fila.get('Title') or "Desconocido"
                             nombre_limpio = nombre.strip().lower()
                             
-                            # Buscar revista existente
+
                             revista = self.revistas.get(nombre_limpio)
                             h_index = revista.h_index if revista else 0
                             
@@ -143,25 +162,16 @@ class SistemaRevistas:
                 except Exception as e:
                     print(f"Error cargando catálogo {catalogo_nombre}: {e}")
 
-    # Resto de métodos manteniendo la lógica pero mejorando prácticas
+    def get_revista(self, titulo):
+        """Devuelve los detalles completos de una revista por su nombre."""
+        return self.revistas.get(titulo.lower())
+
     def revistas_por_area(self, area):
         return sorted(
             self.areas_data.get(area, []),
             key=lambda x: x['h_index'],
             reverse=True
         )
-    
-    def cargar_revistas(self, ruta_json):
-        # Cargar el archivo JSON con la información de las revistas
-        with open(ruta_json, 'r', encoding='latin1') as f:
-            data = json.load(f)
-            for revista in data:
-                # Aquí cargamos cada revista en el diccionario
-                self.revistas[revista['nombre'].lower()] = revista
-
-    # Devuelve la revista por nombre (título)
-    def get_revista(self, titulo):
-        return self.revistas.get(titulo.lower())
 
     def revistas_por_catalogo(self, catalogo):
         """Obtiene las revistas asociadas a un catálogo específico con su h_index y área."""
@@ -188,7 +198,6 @@ class SistemaRevistas:
             return revistas
         return []  # Retorna una lista vacía si el catálogo no existe
 
-    
     def catalogos_disponibles(self):
         return list(self.catalogos_data.keys())
 
