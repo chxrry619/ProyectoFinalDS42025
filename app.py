@@ -3,6 +3,8 @@ from funciones import SistemaRevistas
 import os
 import csv
 import json
+from functools import wraps
+
 
 app = Flask(__name__)
 app.secret_key = 'clave_secreta_super_segura'
@@ -13,6 +15,19 @@ sistema.cargar_usuarios_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS4202
 sistema.cargar_areas_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\areas')
 sistema.cargar_catalogos_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\catalogos')
 sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
+
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario' not in session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+
 
 
 @app.route('/')
@@ -44,6 +59,7 @@ def logout():
     return redirect(url_for('index')) 
 
 @app.route("/buscar", methods=["GET", "POST"])
+@login_required
 def buscar():
     resultados = []
     if request.method == "POST":
@@ -77,6 +93,7 @@ def top():
     return render_template('top.html', revistas=revistas_top)
 
 @app.route('/area', methods=['GET', 'POST'])
+@login_required
 def area():
     revistas_area = []
     if request.method == 'POST':
@@ -85,29 +102,34 @@ def area():
     return render_template('area.html', revistas=revistas_area)
 
 @app.route('/areas')
+@login_required
 def listar_areas():
     areas = sistema.areas_disponibles()
     return render_template('areas.html', areas=areas)
 
 
 @app.route('/area/<area>')
+@login_required
 def area_detalle(area):
     revistas = sistema.revistas_por_area(area)
     return render_template('area_detalle.html', area=area, revistas=revistas)
     
 
 @app.route('/catalogos')
+@login_required
 def catalogos():
     catalogos = sistema.catalogos_disponibles()
     return render_template('catalogos.html', catalogos=catalogos)
 
 @app.route('/catalogo/<catalogo>')
+@login_required
 def catalogo_detalle(catalogo):
     revistas = sistema.revistas_por_catalogo(catalogo)  # Ahora debería funcionar
     return render_template('catalogo_detalle.html', catalogo=catalogo, revistas=revistas)
 
 
 @app.route('/explorar')
+@login_required
 def explorar():
     letra = request.args.get('letra', '').upper()
     area_filtro = request.args.get('area', '')
@@ -198,6 +220,37 @@ def resumen():
     total = len(sistema.revistas)
     promedio = sum(r.h_index for r in sistema.revistas.values()) / total if total > 0 else 0
     return render_template('resumen.html', total=total, promedio=promedio)
+
+@app.route('/guardados')
+def creditos():
+    if 'usuario' not in session:
+        flash("Debes iniciar sesión para ver tus revistas guardadas.")
+        return redirect(url_for('login'))
+
+    usuario = session['usuario']
+    ruta_archivo = os.path.join(RUTA_GUARDADOS, f"{usuario}.json")
+    if os.path.exists(ruta_archivo):
+        with open(ruta_archivo, "r", encoding="utf-8") as f:
+            revistas = json.load(f)
+    else:
+        revistas = []
+
+    return render_template("guardados.html", revistas=revistas)
+
+
+@app.route('/guardar/<titulo>')
+def guardar(titulo):
+    if 'usuario' not in session:
+        flash("Debes iniciar sesión para guardar revistas.")
+        return redirect(url_for('login'))
+    
+    usuario = session['usuario']
+    exito = guardar_revista(usuario, titulo)
+    if exito:
+        flash(f"Revista '{titulo}' guardada correctamente.")
+    else:
+        flash(f"La revista '{titulo}' ya estaba guardada.")
+    return redirect(url_for('revista_detalle', titulo=titulo))
 
 if __name__ == '__main__':
     app.run(debug=True)

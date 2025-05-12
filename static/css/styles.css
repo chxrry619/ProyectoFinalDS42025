@@ -17,8 +17,17 @@ body {
     height: 50px;
     object-fit: contain;
         position: absolute;
-    top: 4px; /* Ajusta la distancia superior */
+    top: -3px; /* Ajusta la distancia superior */
     right: -100px; /* Ajusta la distancia derecha */
+}
+.navbar .navbar-brand2 img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    position: absolute;
+    top: -10px;
+    left: -100px; /* Separación desde el borde izquierdo */
+    z-index: 10;
 }
 
 /* Círculo para la imagen del logo */

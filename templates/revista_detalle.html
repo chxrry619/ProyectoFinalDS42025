@@ -45,7 +45,10 @@
         <th>ID</th>
         <td>{{ revista.id or 'No disponible' }}</td>
     </tr>
+    
 </table>
+
+<a href="{{ url_for('guardar', titulo=revista.nombre) }}" class="btn btn-success">Guardar revista</a>
 
 <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver al inicio</a>
 {% endblock %}

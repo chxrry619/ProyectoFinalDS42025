@@ -16,45 +16,38 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container position-relative">
-            <a class="navbar-brand position-absolute top-0 end-0" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="UNISON" class="logo">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('listar_areas') }}">Áreas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('catalogos') }}">Catálogos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('explorar') }}">Explorar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('buscar') }}">Búsqueda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('creditos') }}">Guardados</a>
-                    </li>                    
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('creditos') }}">Créditos</a>
-                    </li>
-                </ul>
-                <form class="d-flex justify-content-center w-100" action="{{ url_for('buscar') }}" method="get">
-                    
-                    
-                </form>
-                
-                <!-- Botón de Logout si el usuario está logueado -->
-                {% if usuario %}
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container position-relative">
+
+        <!-- Imagen del búho en la esquina superior izquierda -->
+        <a class="navbar-brand2 position-absolute top-0 start-0" href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='img/buho.png') }}" alt="Logo Búho" style="height: 50px;">
+        </a>
+
+        <!-- Logo UNISON en la esquina superior derecha -->
+        <a class="navbar-brand position-absolute top-0 end-0" href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="UNISON" class="logo">
+        </a>
+
+        <!-- Botón de hamburguesa -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Menú de navegación -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('listar_areas') }}">Áreas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('catalogos') }}">Catálogos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('explorar') }}">Explorar</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('buscar') }}">Búsqueda</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('creditos') }}">Guardados</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('creditos') }}">Créditos</a></li>
+            </ul>
+
+                            {% if 'usuario' in session %}
+                    <span class="text-light me-3">Bienvenido, {{ session['usuario'] }}</span>
                     <a href="{{ url_for('logout') }}" class="btn btn-danger ms-2">Cerrar sesión</a>
                 {% else %}
                     <a href="{{ url_for('login') }}" class="btn btn-primary ms-2">Iniciar sesión</a>
@@ -62,6 +55,7 @@
             </div>
         </div>
     </nav>
+
 
     <!-- Main Content -->
     <main class="container my-4">

@@ -66,6 +66,7 @@ class SistemaRevistas:
         self.cargar_json(os.path.join(base_path, 'json', 'revistas_scimagojr.json'))
         self.cargar_catalogos_desde_csv(os.path.join(base_path, 'csv', 'catalogos'))
         self.cargar_areas_desde_csv(os.path.join(base_path, 'csv', 'areas'))
+        RUTA_GUARDADOS = r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\guardados' 
 
     def cargar_json(self, ruta_archivo):
         try:
@@ -89,6 +90,8 @@ class SistemaRevistas:
             print(f"Revistas cargadas: {len(self.revistas)}")
         except Exception as e:
             print(f"Error cargando JSON: {e}")
+            
+            
 
     def cargar_areas_desde_csv(self, carpeta_areas):
         mapeo_nombres = {
@@ -172,6 +175,24 @@ class SistemaRevistas:
             key=lambda x: x['h_index'],
             reverse=True
         )
+    
+    def guardar_revista(usuario, revista):
+    ruta_archivo = os.path.join(RUTA_GUARDADOS, f"{usuario}.json")
+    
+    # Cargar datos previos
+    if os.path.exists(ruta_archivo):
+        with open(ruta_archivo, "r", encoding="utf-8") as f:
+            guardadas = json.load(f)
+    else:
+        guardadas = []
+
+    # Evitar duplicados
+    if revista not in guardadas:
+        guardadas.append(revista)
+        with open(ruta_archivo, "w", encoding="utf-8") as f:
+            json.dump(guardadas, f, indent=4, ensure_ascii=False)
+        return True
+    return False
 
     def revistas_por_catalogo(self, catalogo):
         """Obtiene las revistas asociadas a un catálogo específico con su h_index y área."""
