@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import random
 import os
-import movie_clases as mc
+import funciones as mc
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) # Clave secreta para sesiones
