@@ -81,8 +81,7 @@ def catalogos():
 
 @app.route('/catalogo/<catalogo>')
 def catalogo_detalle(catalogo):
-    revistas = sistema.revistas_por_catalogo(catalogo)
-    print(f"Revistas en el catálogo {catalogo}: {revistas}")
+    revistas = sistema.revistas_por_catalogo(catalogo)  # Ahora debería funcionar
     return render_template('catalogo_detalle.html', catalogo=catalogo, revistas=revistas)
 
 
@@ -90,33 +89,46 @@ def catalogo_detalle(catalogo):
 def explorar():
     letra = request.args.get('letra', '').upper()
     page = int(request.args.get('page', 1))
-    por_pagina = 10 
+    por_pagina = 10
 
-    sistema = SistemaRevistas()
-    sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
-
-    todas = list(sistema.revistas.items())  
+    todas_revistas = list(sistema.revistas.values())
 
     if letra:
-        todas = [(k, v) for k, v in todas if k.upper().startswith(letra)]
+        todas_revistas = [r for r in todas_revistas if r.nombre.upper().startswith(letra)]
 
-    total_paginas = (len(todas) - 1) // por_pagina + 1
+    total_paginas = (len(todas_revistas) - 1) // por_pagina + 1
     inicio = (page - 1) * por_pagina
     fin = inicio + por_pagina
-    revistas_pagina = todas[inicio:fin]
+    revistas_pagina = todas_revistas[inicio:fin]
 
+    # Letras disponibles para el filtro
     letras = sorted(set(r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre))
+
+    # Diccionario enriquecido que usará la plantilla
+    revistas_dict = {}
+
+    for r in revistas_pagina:
+        catalogos = [
+            nombre_cat for nombre_cat, revistas in sistema.catalogos_data.items()
+            if any(r.nombre.lower() == rev['nombre'].strip().lower() for rev in revistas)
+        ]
+        areas = [r.subject_area_category] if r.subject_area_category else []
+
+        revistas_dict[r.nombre] = {
+            'h_index': r.h_index,
+            'catalogos': catalogos,
+            'areas': areas
+        }
 
     return render_template(
         'explorar.html',
-        revistas=revistas_pagina,
-        scimagojr=sistema.scimagojr,  
+        revistas=revistas_dict.items(),  # así lo espera tu plantilla: (titulo, info)
+        scimagojr=sistema.scimagojr,
         page=page,
         total_pages=total_paginas,
         letras=letras,
         letra_actual=letra
     )
-
 
 @app.route('/creditos')
 def creditos():

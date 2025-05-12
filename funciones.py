@@ -53,7 +53,7 @@ class SistemaRevistas:
         base_path = r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos'
         self.cargar_json(os.path.join(base_path, 'json', 'revistas_scimagojr.json'))
         self.cargar_catalogos_desde_csv(os.path.join(base_path, 'csv', 'catalogos'))
-        self.cargar_areas_desde_csv(os.path.join(base_path, 'csv', 'areas'))  # Nueva ruta para áreas
+        self.cargar_areas_desde_csv(os.path.join(base_path, 'csv', 'areas'))
 
     def cargar_json(self, ruta_archivo):
         try:
@@ -110,6 +110,7 @@ class SistemaRevistas:
                 except Exception as e:
                     print(f"Error cargando área {area_nombre}: {e}")
 
+
     def cargar_catalogos_desde_csv(self, carpeta_catalogos):
         mapeo_catalogos = {
             'CONACYT_RadGridExport.csv': 'CONACYT',
@@ -129,7 +130,7 @@ class SistemaRevistas:
                         registros = []
                         for fila in lector:
                             nombre = fila.get('Nombre de la revista') or \
-                                     fila.get('TITULO:e') or \
+                                     fila.get('TITULO:') or \
                                      fila.get('Revista') or \
                                      fila.get('Title') or \
                                      "Desconocido"
@@ -149,6 +150,35 @@ class SistemaRevistas:
             key=lambda x: x['h_index'],
             reverse=True
         )
+    
+    def revistas_por_catalogo(self, catalogo):
+        """Obtiene las revistas asociadas a un catálogo específico con su h_index y área."""
+        if catalogo in self.catalogos_data:
+            revistas = []
+            for revista_data in self.catalogos_data[catalogo]:
+                nombre = revista_data['nombre'].strip().lower()
+                # Buscar la revista completa en el diccionario de revistas
+                revista_completa = self.revistas.get(nombre)
+                if revista_completa:
+                    # Obtener el h_index y área si se encuentra la revista completa
+                    revistas.append({
+                        'nombre': revista_completa.nombre,
+                        'h_index': revista_completa.h_index,
+                        'subject_area_category': revista_completa.subject_area_category
+                    })
+                else:
+                    # Si no se encuentra la revista, solo mostrar nombre y h_index
+                    revistas.append({
+                        'nombre': revista_data['nombre'],
+                        'h_index': revista_data['h_index'],
+                        'subject_area_category': "Desconocida"
+                    })
+            return revistas
+        return []  # Retorna una lista vacía si el catálogo no existe
+
+    
+    def catalogos_disponibles(self):
+        return list(self.catalogos_data.keys())
 
     def areas_disponibles(self):
         return list(self.areas_data.keys())
