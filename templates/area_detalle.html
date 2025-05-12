@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{ area }} - Sistema de Revistas UNISON{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">Revistas en {{ area }}</h1>
+        
+        <div class="table-responsive">
+            <table class="table table-striped" id="revistasTable">
+                <thead>
+                    <tr>
+                        <th>Título de la Revista</th>
+                        <th>H-Index</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for titulo, datos in revistas.items() %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('revista_detalle', titulo=titulo) }}">{{ titulo }}</a>
+                        </td>
+                        <td>{{ datos.h_index }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#revistasTable').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        },
+        order: [[1, 'desc']],
+        pageLength: 25
+    });
+});
+</script>
+{% endblock %}

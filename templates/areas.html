@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Áreas Disponibles - Sistema de Revistas UNISON{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Áreas Disponibles</h2>
+    <ul class="list-group">
+        {% for area in areas %}
+        <li class="list-group-item">
+            <a href="{{ url_for('detalle_area', area=area|string) }}">{{ area }}</a>
+
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogos - Sistema de Exploración de Revistas UNISON{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">Catálogos Disponibles</h1>
+        
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for catalogo in catalogos %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ catalogo }}</h5>
+                        <a href="{{ url_for('catalogo_detalle', catalogo=catalogo) }}" class="btn btn-primary">Ver Revistas</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

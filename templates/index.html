@@ -1,6 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Movie Database{% endblock %}
-{% block body %}
-    <h1>Movie Database</h1>
-    <p>Bienvendidos/as a  MovieDatabase</p>
+
+{% block title %}Bienvenido al Sistema de Exploración de Revistas{% endblock %}
+
+{% block content %}
+        {% if usuario %}
+            <h3>Bienvenido, {{ usuario }}!</h3>
+            <!-- Enlace de logout -->
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar sesión</a>
+        {% else %}
+            <p>Si ya tienes una cuenta, <a href="{{ url_for('login') }}">inicia sesión</a> para explorar las revistas.</p>
+        {% endif %}
+    <div class="container mt-5">
+        <h1>Bienvenido al Sistema de Exploración de Revistas</h1>
+        <p>Explora las revistas académicas de manera fácil y rápida.</p>
+
+
+    </div>
 {% endblock %}
