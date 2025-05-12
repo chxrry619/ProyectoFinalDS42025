@@ -100,13 +100,13 @@ def explorar():
     page = int(request.args.get('page', 1))
     por_pagina = 10  # Número de resultados por página
 
-    # Crear instancia del sistema
+    # Crear una instancia del sistema
     sistema = SistemaRevistas()
 
     # Cargar los datos de SCImago en el sistema
     sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
 
-    # Obtener todas las revistas (esto asume que el objeto 'revistas' ya está cargado)
+    # Obtener todas las revistas (esto asume que 'revistas' ya está cargado)
     todas = list(sistema.revistas.items())  # Convierte dict_items a lista
 
     # Filtrar revistas por letra (si se pasa una letra en la URL)

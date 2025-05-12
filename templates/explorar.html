@@ -35,7 +35,7 @@
                             <a href="{{ url_for('revista_detalle', titulo=titulo) }}">{{ titulo }}</a>
                         </td>
                         <td>
-                            {{ scimagojr.get(titulo, {}).get('h_index', 'N/A') }}
+                             {{ scimagojr.get(titulo, {}).get('h_index', 'N/A') }}
                         </td>
                         <td>
                             {% for catalogo in info['catalogos'] %}
