@@ -151,6 +151,18 @@ class SistemaRevistas:
             reverse=True
         )
     
+    def cargar_revistas(self, ruta_json):
+        # Cargar el archivo JSON con la información de las revistas
+        with open(ruta_json, 'r', encoding='latin1') as f:
+            data = json.load(f)
+            for revista in data:
+                # Aquí cargamos cada revista en el diccionario
+                self.revistas[revista['nombre'].lower()] = revista
+
+    # Devuelve la revista por nombre (título)
+    def get_revista(self, titulo):
+        return self.revistas.get(titulo.lower())
+
     def revistas_por_catalogo(self, catalogo):
         """Obtiene las revistas asociadas a un catálogo específico con su h_index y área."""
         if catalogo in self.catalogos_data:

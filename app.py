@@ -84,6 +84,7 @@ def catalogo_detalle(catalogo):
     revistas = sistema.revistas_por_catalogo(catalogo)  # Ahora debería funcionar
     return render_template('catalogo_detalle.html', catalogo=catalogo, revistas=revistas)
 
+
 @app.route('/explorar')
 def explorar():
     letra = request.args.get('letra', '').upper()
@@ -98,51 +99,59 @@ def explorar():
     if letra:
         todas_revistas = [r for r in todas_revistas if r.nombre.upper().startswith(letra)]
 
-    # Filtrar por área
+    # Filtrar por área usando los nombres mapeados
     if area_filtro:
-        todas_revistas = [r for r in todas_revistas if r.subject_area_category == area_filtro]
+        nombres_area = {revista['nombre'].strip().lower() for revista in sistema.areas_data.get(area_filtro, [])}
+        todas_revistas = [r for r in todas_revistas if r.nombre.strip().lower() in nombres_area]
 
-    # Total de páginas
+    # Paginación (versión corregida)
     total_paginas = (len(todas_revistas) - 1) // por_pagina + 1
     inicio = (page - 1) * por_pagina
     fin = inicio + por_pagina
     revistas_pagina = todas_revistas[inicio:fin]
 
-    # Crear diccionario enriquecido
+    # Crear diccionario con datos enriquecidos
     revistas_dict = {}
-    for r in revistas_pagina:
-        catalogos = [
-            nombre_cat for nombre_cat, revistas in sistema.catalogos_data.items()
-            if any(r.nombre.lower() == rev['nombre'].strip().lower() for rev in revistas)
+    for revista in revistas_pagina:
+        # Buscar áreas mapeadas
+        areas_revista = [
+            nombre_area for nombre_area, revistas_area in sistema.areas_data.items()
+            if any(revista.nombre.lower() == r['nombre'].strip().lower() for r in revistas_area)
         ]
-        areas = [r.subject_area_category] if r.subject_area_category else []
+        
+        # Buscar catálogos
+        catalogos_revista = [
+            nombre_cat for nombre_cat, revistas_cat in sistema.catalogos_data.items()
+            if any(revista.nombre.lower() == r['nombre'].strip().lower() for r in revistas_cat)
+        ]
 
-        nombre_normalizado = r.nombre.strip().lower()
+        # Obtener h_index (versión corregida con paréntesis)
+        nombre_normalizado = revista.nombre.strip().lower()
         h_index = next(
             (info.get('h_index') for nombre, info in sistema.scimagojr.items()
-             if nombre.strip().lower() == nombre_normalizado),
-            r.h_index
-        )
+            if nombre.strip().lower() == nombre_normalizado
+        ), revista.h_index)
 
-        revistas_dict[r.nombre] = {
+        revistas_dict[revista.nombre] = {
             'h_index': h_index,
-            'catalogos': catalogos,
-            'areas': areas
+            'catalogos': catalogos_revista,
+            'areas': areas_revista
         }
 
-    letras = sorted(set(r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre))
-    areas_disponibles = sistema.areas_disponibles()
+    # Obtener letras y áreas disponibles
+    letras = sorted({r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre})
+    areas_disponibles = sorted(sistema.areas_data.keys())
 
     return render_template(
         'explorar.html',
         revistas=revistas_dict.items(),
         scimagojr=sistema.scimagojr,
-        page=page,
-        total_pages=total_paginas,
         letras=letras,
         letra_actual=letra,
         areas=areas_disponibles,
-        area_actual=area_filtro
+        area_actual=area_filtro,
+        page=page,
+        total_pages=total_paginas
     )
     
 @app.route('/creditos')
@@ -151,7 +160,15 @@ def creditos():
 
 @app.route('/revista/<titulo>')
 def revista_detalle(titulo):
-    revista = sistema.revistas.get(titulo.lower())
+    # Obtener la revista por su nombre (asegurándote de que el título está en el formato correcto)
+    revista = sistema.revistas.get(titulo)
+    
+    # Si no se encuentra la revista, redirigir o mostrar un error
+    if not revista:
+        flash('Revista no encontrada', 'danger')
+        return redirect(url_for('index'))
+    
+    # Mostrar la plantilla con los detalles de la revista
     return render_template('revista_detalle.html', revista=revista)
 
 @app.route('/resumen')
