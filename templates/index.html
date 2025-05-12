@@ -1,19 +1,13 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Bienvenido al Sistema de Exploración de Revistas{% endblock %}
+{% block title %}Página Principal{% endblock %}
 
 {% block content %}
+    <div class="container mt-4">
         {% if usuario %}
-            <h3>Bienvenido, {{ usuario }}!</h3>
-            <!-- Enlace de logout -->
-            <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar sesión</a>
+            <h2>Bienvenido, {{ usuario }}!</h2>
         {% else %}
-            <p>Si ya tienes una cuenta, <a href="{{ url_for('login') }}">inicia sesión</a> para explorar las revistas.</p>
+            <h2>Por favor, inicia sesión</h2>
         {% endif %}
-    <div class="container mt-5">
-        <h1>Bienvenido al Sistema de Exploración de Revistas</h1>
-        <p>Explora las revistas académicas de manera fácil y rápida.</p>
-
-
     </div>
 {% endblock %}

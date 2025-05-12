@@ -17,8 +17,8 @@ body {
     height: 50px;
     object-fit: contain;
         position: absolute;
-    top: -5px; /* Ajusta la distancia superior */
-    right: -5px; /* Ajusta la distancia derecha */
+    top: 4px; /* Ajusta la distancia superior */
+    right: -100px; /* Ajusta la distancia derecha */
 }
 
 /* Círculo para la imagen del logo */

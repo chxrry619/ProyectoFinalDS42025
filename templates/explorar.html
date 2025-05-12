@@ -6,6 +6,17 @@
 <div class="row">
     <div class="col-md-12">
         <h1 class="mb-4">Explorar Todas las Revistas</h1>
+        <div class="mb-4">
+    <h5>Filtrar por letra:</h5>
+    <div class="d-flex flex-wrap">
+        {% for letra in letras %}
+        <a href="{{ url_for('explorar', letra=letra) }}" class="btn btn-outline-secondary btn-sm me-2 mb-2 {% if letra == letra_actual %}active{% endif %}">
+            {{ letra }}
+        </a>
+        {% endfor %}
+        <a href="{{ url_for('explorar') }}" class="btn btn-outline-dark btn-sm mb-2">Todas</a>
+    </div>
+</div>
         
         <div class="table-responsive">
             <table class="table table-striped" id="revistasTable">

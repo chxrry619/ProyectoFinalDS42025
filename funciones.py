@@ -44,11 +44,12 @@ class Usuario:
 
 class SistemaRevistas:
     def __init__(self, ruta_json=None):
-        self.revistas = {}
         self.usuarios = {}
         self.usuario_actual = None
-        self.areas_data = {}  # Nuevo: para guardar revistas por área
-        self.scimagojr_data = {}  # Esto debe cargarse externamente
+        self.areas_data = {}
+        self.catalogos_data = {}
+        self.revistas = {}  # Diccionario de revistas
+        self.scimagojr = {}  # Diccionario de datos SCImago
         if ruta_json:
             self.cargar_json(ruta_json)
 
@@ -98,6 +99,30 @@ class SistemaRevistas:
             return True
         return False
 
+    def cargar_catalogos_desde_csv(self, carpeta_catalogos):
+        mapeo_catalogos = {
+            'CONACYT_RadGridExport.csv': 'CONACYT',
+            'JCR_RadGridExport.csv': 'JCR',
+            'MLA_RadGridExport.csv': 'MLA',
+            'SCIELO_RadGridExport.csv': 'SciELO',
+            'SCOPUS_RadGridExport.csv': 'Scopus'
+        }
+
+        self.catalogos_data = {}
+        for filename in os.listdir(carpeta_catalogos):
+            if filename.endswith(".csv") and filename in mapeo_catalogos:
+                catalogo_nombre = mapeo_catalogos[filename]
+                ruta = os.path.join(carpeta_catalogos, filename)
+                with open(ruta, encoding='latin1') as f:
+                    lector = csv.DictReader(f)
+                    self.catalogos_data[catalogo_nombre] = [fila for fila in lector]
+
+    def catalogos_disponibles(self):
+        return list(self.catalogos_data.keys())
+
+    def revistas_por_catalogo(self, nombre_catalogo):
+        return self.catalogos_data.get(nombre_catalogo, [])
+
     def agregar_usuario(self, username, nombre_completo, email, password):
         if username not in self.usuarios:
             self.usuarios[username] = Usuario(username, nombre_completo, email, password)
@@ -105,7 +130,6 @@ class SistemaRevistas:
     def agregar_revista(self, nombre, site, h_index, subject_area_category):
         if self.usuario_actual:
             self.revistas[nombre.lower()] = Revista(nombre, site, h_index, subject_area_category)
-
 
     def cargar_areas_desde_csv(self, carpeta_areas):
         mapeo_nombres = {
@@ -145,11 +169,11 @@ class SistemaRevistas:
         return [r for r in self.revistas.values() if r.h_index >= minimo]
 
     def ordenar_revistas_por_hindex(self, descendente=True):
-        return sorted(self.revistas.values(), key=lambda r: r.h_index, reverse=descendente)
+        return sorted(self.revistas.values(), key=lambda r: r.h_index, reverse=descendiente)
 
     def top_revistas_por_area(self, area, limite=10):
         filtradas = self.revistas_por_area(area)
-        return sorted(filtradas, key=lambda r: r.h_index, reverse=True)[:limite]
+        return sorted(filtradas, key=lambda r: r['H-Index'], reverse=True)[:limite]
 
     def exportar_json(self, archivo_salida='revistas_exportadas.json'):
         data = {r.nombre: r.to_dict() for r in self.revistas.values()}

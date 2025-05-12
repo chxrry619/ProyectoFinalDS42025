@@ -10,6 +10,7 @@ app.secret_key = 'clave_secreta_super_segura'
 # Inicializar sistema
 sistema = SistemaRevistas()
 sistema.cargar_areas_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\areas')
+sistema.cargar_catalogos_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\catalogos')
 sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
 sistema.cargar_usuarios_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\users\users.csv')
 
@@ -84,35 +85,53 @@ def detalle_area(area):
 
 @app.route('/catalogos')
 def catalogos():
-    # Lógica para la vista de Catálogos
-    return render_template('catalogos.html')
+    catalogos = sistema.catalogos_disponibles()
+    return render_template('catalogos.html', catalogos=catalogos)
+
+@app.route('/catalogo/<catalogo>')
+def catalogo_detalle(catalogo):
+    revistas = sistema.revistas_por_catalogo(catalogo)
+    return render_template('detalle_catalogo.html', catalogo=catalogo, revistas=revistas)
+
 
 @app.route('/explorar')
 def explorar():
-    # Intentar cargar las revistas desde el archivo JSON
-    scimagojr = sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
-    
-    if scimagojr is None:
-        # Manejar el caso en que el archivo no se carga correctamente
-        return "Error al cargar los datos de las revistas."
+    letra = request.args.get('letra', '').upper()
+    page = int(request.args.get('page', 1))
+    por_pagina = 10  # Número de resultados por página
 
-    # Asignar las revistas al valor cargado
-    revistas = scimagojr
-    
-    if not revistas:
-        # Si no hay revistas en el archivo JSON
-        return "No se encontraron revistas en el archivo JSON."
+    # Crear instancia del sistema
+    sistema = SistemaRevistas()
 
-    # Paginación de las revistas
-    page = request.args.get('page', 1, type=int)
-    items_per_page = 10  # Número de revistas por página
-    total_pages = len(revistas) // items_per_page + (1 if len(revistas) % items_per_page > 0 else 0)
-    
-    # Obtener las revistas correspondientes a la página actual
-    revistas_paginadas = revistas[(page - 1) * items_per_page : page * items_per_page]
+    # Cargar los datos de SCImago en el sistema
+    sistema.cargar_json(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\json\revistas_scimagojr.json')
 
-    # Pasar los datos a la plantilla
-    return render_template('explorar.html', revistas=revistas_paginadas, page=page, total_pages=total_pages, scimagojr=scimagojr)
+    # Obtener todas las revistas (esto asume que el objeto 'revistas' ya está cargado)
+    todas = list(sistema.revistas.items())  # Convierte dict_items a lista
+
+    # Filtrar revistas por letra (si se pasa una letra en la URL)
+    if letra:
+        todas = [(k, v) for k, v in todas if k.upper().startswith(letra)]
+
+    # Calcular paginación
+    total_paginas = (len(todas) - 1) // por_pagina + 1
+    inicio = (page - 1) * por_pagina
+    fin = inicio + por_pagina
+    revistas_pagina = todas[inicio:fin]
+
+    # Generar lista de letras disponibles para la navegación
+    letras = sorted(set(r.nombre[0].upper() for r in sistema.revistas.values() if r.nombre))
+
+    return render_template(
+        'explorar.html',
+        revistas=revistas_pagina,
+        scimagojr=sistema.scimagojr,  # Ahora pasamos el scimagojr correctamente
+        page=page,
+        total_pages=total_paginas,
+        letras=letras,
+        letra_actual=letra
+    )
+
 
 @app.route('/creditos')
 def creditos():
