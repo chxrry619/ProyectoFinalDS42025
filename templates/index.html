@@ -7,6 +7,7 @@
         {% if usuario %}
             <h1>Bienvenido, {{ usuario }}!</h1>
                 <p class="lead">Bienvenido a Buhoteca, tu sistema de exploración académica. Aquí puedes buscar, explorar y gestionar revistas científicas de forma sencilla.</p>
+                <p>Última visita: {{ ultima_visita.strftime('%Y-%m-%d') if ultima_visita != datetime.min else 'Nunca' }}</p>
                                 <img src="{{ url_for('static', filename='img/aaaaaaaaaaaa.jpg') }}" alt="Logo de Buhoteca" class="img-fluid my-4" style="max-width: 1415px;">
                 {% else %}
             <h2>Por favor, inicia sesión</h2>

@@ -4,6 +4,7 @@ import os
 import csv
 import json
 from functools import wraps
+from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
@@ -11,6 +12,7 @@ app.secret_key = 'clave_secreta_super_segura'
 
 # Inicializar sistema
 sistema = SistemaRevistas()
+RUTA_GUARDADOS = r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\guardados'
 sistema.cargar_usuarios_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\users\users.csv')
 sistema.cargar_areas_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\areas')
 sistema.cargar_catalogos_desde_csv(r'C:\Users\YUGEN\Documents\ProyectoFinalDS42025\datos\csv\catalogos')
@@ -32,12 +34,28 @@ def login_required(f):
 
 @app.route('/')
 def index():
+    ultima_visita = session.get('ultima_visita', None)
+
+    if ultima_visita:
+        ultima_visita = datetime.strptime(ultima_visita, '%Y-%m-%d')
+    else:
+        ultima_visita = datetime.min
+
+    periodo_actualizacion = timedelta(days=30)
+    # Si la fecha de la última visita es más antigua que el periodo de actualización, actualizar datos
+    if datetime.now() - ultima_visita > periodo_actualizacion:
+        # Aquí agregarías la lógica para actualizar los datos de SCIMAGO
+        actualizar_datos_scimago()
+        session['ultima_visita'] = datetime.now().strftime('%Y-%m-%d')  # Actualiza la fecha de visita
     if 'usuario' not in session:
         return redirect(url_for('login'))  
 
     usuario = session['usuario']
-    return render_template('index.html', usuario=usuario)
+    return render_template('index.html', usuario=usuario, ultima_visita=ultima_visita, datetime=datetime)
 
+def actualizar_datos_scimago():
+    # Aquí va el código para hacer scraping o acceder a SCIMAGO y actualizar los datos
+    print("Actualizando datos de SCIMAGO...")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -221,21 +239,7 @@ def resumen():
     promedio = sum(r.h_index for r in sistema.revistas.values()) / total if total > 0 else 0
     return render_template('resumen.html', total=total, promedio=promedio)
 
-@app.route('/guardados')
-def creditos():
-    if 'usuario' not in session:
-        flash("Debes iniciar sesión para ver tus revistas guardadas.")
-        return redirect(url_for('login'))
 
-    usuario = session['usuario']
-    ruta_archivo = os.path.join(RUTA_GUARDADOS, f"{usuario}.json")
-    if os.path.exists(ruta_archivo):
-        with open(ruta_archivo, "r", encoding="utf-8") as f:
-            revistas = json.load(f)
-    else:
-        revistas = []
-
-    return render_template("guardados.html", revistas=revistas)
 
 
 @app.route('/guardar/<titulo>')
